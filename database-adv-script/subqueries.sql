@@ -1,5 +1,5 @@
 -- joins_queries.sql
--- SQL Queries Demonstrating JOIN Types for AirBnB Database
+-- SQL Queries Demonstrating JOIN Types and Subqueries for AirBnB Database
 
 -- Query 1: Retrieve all bookings and the respective users who made those bookings.
 -- This uses an INNER JOIN, which returns rows when there is a match in both tables.
@@ -73,3 +73,44 @@ RIGHT JOIN
     Booking AS B ON U.user_id = B.user_id
 WHERE
     U.user_id IS NULL; -- This condition ensures we only get rows from Booking that had no match in User
+
+-- Query 4: Find all properties where the average rating is greater than 4.0 using a subquery.
+-- This query uses a subquery to first calculate the average rating for each property
+-- and then filters properties based on that average.
+SELECT
+    P.property_id,
+    P.name AS property_name,
+    P.location,
+    AVG_R.average_rating
+FROM
+    Property AS P
+INNER JOIN (
+    SELECT
+        property_id,
+        AVG(rating) AS average_rating
+    FROM
+        Review
+    GROUP BY
+        property_id
+    HAVING
+        AVG(rating) > 4.0
+) AS AVG_R ON P.property_id = AVG_R.property_id;
+
+-- Query 5: Find users who have made more than 3 bookings using a correlated subquery.
+-- This query uses a correlated subquery to count bookings for each user.
+SELECT
+    U.user_id,
+    U.first_name,
+    U.last_name,
+    U.email
+FROM
+    User AS U
+WHERE (
+    SELECT
+        COUNT(B.booking_id)
+    FROM
+        Booking AS B
+    WHERE
+        B.user_id = U.user_id
+) > 3;
+
