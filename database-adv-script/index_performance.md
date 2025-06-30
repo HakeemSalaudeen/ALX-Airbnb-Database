@@ -1,27 +1,51 @@
--- database_index.sql
--- Additional Indexes for AirBnB Database
+# Additional Indexes for AirBnB Database
 
--- This script contains CREATE INDEX statements for columns
--- frequently used in WHERE clauses, ORDER BY clauses, and JOIN operations,
--- beyond the primary keys and foreign keys already explicitly indexed in schema.sql.
--- These indexes aim to further optimize query performance.
+This document describes additional SQL indexes created to optimize query performance in the AirBnB database. These indexes are intended for columns frequently used in `WHERE` clauses, `ORDER BY` clauses, and `JOIN` operations, beyond the primary and foreign keys already defined in `schema.sql`.
 
--- Index on Property.location for efficient geographical searches
-CREATE INDEX idx_property_location ON Property (location);
+## Indexes Included
 
--- Index on Property.pricepernight for range queries (e.g., price filtering)
-CREATE INDEX idx_property_pricepernight ON Property (pricepernight);
+- **Property.location**  
+  For efficient geographical searches:
+  ```sql
+  CREATE INDEX idx_property_location ON Property (location);
+  ```
 
--- Index on Booking.start_date for availability checks and date range queries
-CREATE INDEX idx_booking_start_date ON Booking (start_date);
+- **Property.pricepernight**  
+  For range queries and price filtering:
+  ```sql
+  CREATE INDEX idx_property_pricepernight ON Property (pricepernight);
+  ```
 
--- Index on Booking.end_date for availability checks and date range queries
-CREATE INDEX idx_booking_end_date ON Booking (end_date);
+- **Booking.start_date**  
+  For availability checks and date range queries:
+  ```sql
+  CREATE INDEX idx_booking_start_date ON Booking (start_date);
+  ```
 
--- Index on Booking.status for filtering bookings by their current state
-CREATE INDEX idx_booking_status ON Booking (status);
+- **Booking.end_date**  
+  For availability checks and date range queries:
+  ```sql
+  CREATE INDEX idx_booking_end_date ON Booking (end_date);
+  ```
 
--- Composite index for efficient querying on Booking dates and property_id
--- This can be particularly useful for availability checks:
--- SELECT * FROM Booking WHERE property_id = ? AND start_date < ? AND end_date > ?
-CREATE INDEX idx_booking_property_dates ON Booking (property_id, start_date, end_date);
+- **Booking.status**  
+  For filtering bookings by their current state:
+  ```sql
+  CREATE INDEX idx_booking_status ON Booking (status);
+  ```
+
+- **Booking(property_id, start_date, end_date)**  
+  Composite index for efficient querying on booking dates and property:
+  ```sql
+  CREATE INDEX idx_booking_property_dates ON Booking (property_id, start_date, end_date);
+  ```
+  _Useful for queries like:_  
+  `SELECT * FROM Booking WHERE property_id = ? AND start_date < ? AND end_date > ?`
+
+## Usage
+
+To apply these indexes, run the corresponding `CREATE INDEX` statements in your SQL client after creating your tables.
+
+---
+
+These indexes help improve the performance of common queries and should be reviewed and adjusted based on actual query patterns and database size.
